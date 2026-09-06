@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #fefefe;
+}
+
+* {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  -webkit-tap-highlight-color: transparent;
+}
