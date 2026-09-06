@@ -36,21 +36,19 @@ export default function Dashboard() {
   const totalUtang = customers.reduce((sum, c) => sum + c.balance, 0)
   const lowStock = products.filter((p) => isLowStock(p))
 
-  // 7-day history
-  const days: { label: string; date: Date; revenue: number; profit: number; utang: number; count: number }[] = []
+  // 7-day history - clearer labels: Ngayon (Set 7) etc with full date + weekday
+  const days: { label: string; sublabel: string; date: Date; revenue: number; profit: number; utang: number; count: number }[] = []
   for (let i = 0; i < 7; i++) {
     const d = new Date(today)
     d.setDate(today.getDate() - i)
     const s = startOfDay(d)
     const e = endOfDay(d)
     const daySales = sales.filter((sale) => sale.createdAt >= s && sale.createdAt <= e)
+    const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }) // e.g., Sep 07
+    const weekday = d.toLocaleDateString('fil-PH', { weekday: 'short' }) // e.g., Lun, Mar
     days.push({
-      label:
-        i === 0
-          ? 'Ngayon'
-          : i === 1
-            ? 'Kahapon'
-            : d.toLocaleDateString('fil-PH', { month: 'short', day: 'numeric' }),
+      label: i === 0 ? `Ngayon — ${dateStr}` : i === 1 ? `Kahapon — ${dateStr}` : dateStr,
+      sublabel: i <= 1 ? `${weekday} • ${d.toLocaleDateString('fil-PH', { month: 'long', day: 'numeric' })}` : `${weekday} • ${d.toLocaleDateString('fil-PH', { month: 'long', day: 'numeric', year: 'numeric' })}`,
       date: d,
       revenue: daySales.reduce((sum, sale) => sum + sale.totalRevenue, 0),
       profit: daySales.reduce((sum, sale) => sum + sale.totalProfit, 0),
@@ -159,7 +157,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm font-medium text-zinc-900">{d.label}</p>
                 <p className="text-xs text-zinc-500">
-                  {d.count} benta {d.utang > 0 ? `• Utang ${formatPeso(d.utang)}` : ''}
+                  {d.sublabel} • {d.count} benta {d.utang > 0 ? `• Utang ${formatPeso(d.utang)}` : ''}
                 </p>
               </div>
               <div className="text-right">
